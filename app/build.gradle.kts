@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.example.chillitest"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.chillitest"
@@ -16,6 +16,8 @@ android {
         versionCode = 1
         versionName = "1.0.0"
 
+        buildConfigField("String", "API_KEY","\"eRhTbiIpIS9k5I4LAVEk3xZP3KyJvFJ1\"")
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
@@ -23,6 +25,13 @@ android {
     }
 
     buildTypes {
+        debug {
+            isMinifyEnabled = false
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+            buildConfigField("Boolean", "DEBUG", "true")
+        }
+
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -39,6 +48,7 @@ android {
         jvmTarget = "1.8"
     }
     buildFeatures {
+        buildConfig = true
         compose = true
     }
     composeOptions {
@@ -53,10 +63,9 @@ android {
 
 dependencies {
 
-    implementation("com.google.code.gson:gson:2.10.1")
-    implementation("com.google.dagger:hilt-android:2.48")
-    kapt("com.google.dagger:hilt-android-compiler:2.48")
-    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -73,4 +82,18 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation(libs.retrofit)
+    implementation(libs.gson)
+    implementation(libs.converter.gson)
+    // Compose
+    val composeBom = platform("androidx.compose:compose-bom:2023.08.00")
+    implementation(composeBom)
+    androidTestImplementation(composeBom)
+    implementation(libs.material3)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+    //Coil
+    implementation(libs.coil.compose)
+    implementation(libs.coil.gif)
 }
