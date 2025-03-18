@@ -1,4 +1,4 @@
-package com.example.chillitest.presentation
+package com.example.chillitest.presentation.view
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

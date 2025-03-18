@@ -10,11 +10,11 @@ import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
-class RepositoryModule {
+object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideRepository(apiService: ApiService): GiphyRepository {
-        return GiphyRepository(apiService)
+    fun provideGiphyRepository(api: ApiService): GiphyRepository {
+        return GiphyRepository(api)
     }
 }

@@ -50,11 +50,4 @@ object NetworkModule {
     fun provideGiphyApi(retrofit: Retrofit): ApiService {
         return retrofit.create(ApiService::class.java)
     }
-
-    @Provides
-    @Singleton
-    fun provideGiphyRepository(api: ApiService): GiphyRepository {
-        return GiphyRepository(api)
-    }
-
 }
