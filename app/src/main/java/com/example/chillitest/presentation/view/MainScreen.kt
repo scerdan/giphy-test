@@ -1,6 +1,6 @@
 package com.example.chillitest.presentation.view
 
-import android.widget.Toast
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -39,14 +39,12 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import coil.compose.SubcomposeAsyncImage
-import coil.compose.rememberAsyncImagePainter
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
@@ -59,10 +57,11 @@ import com.example.chillitest.presentation.viewmodel.GiphyViewModel
 import kotlinx.coroutines.delay
 
 @Composable
-fun MainScreen(viewModel: GiphyViewModel = hiltViewModel()) {
+fun MainScreen(navController: NavHostController, viewModel: GiphyViewModel) {
     var searchQuery by remember { mutableStateOf("") }
 
     val gifState by viewModel.gifState.collectAsState()
+    val dataItems by viewModel.selectedItem.collectAsState()
     val emptyComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.empty))
     val networkErrorComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.internet_error))
 
@@ -127,6 +126,10 @@ fun MainScreen(viewModel: GiphyViewModel = hiltViewModel()) {
                     )
                 } else {
                     ShowAll(data = data, viewModel = viewModel, searchQuery = searchQuery)
+                }
+
+                if (dataItems is ResultTypes.Success) {
+                    Log.e("ITEM", (dataItems as ResultTypes.Success<Data>).data.toString())
                 }
             }
         }
@@ -211,12 +214,7 @@ fun ShowAll(data: List<Data>, viewModel: GiphyViewModel, searchQuery: String) {
                     .padding(1.dp)
                     .aspectRatio(1f)
                     .clickable {
-                        Toast
-                            .makeText(
-                                context,
-                                data[count].alt_text, Toast.LENGTH_SHORT
-                            )
-                            .show()
+                        viewModel.selectItem(data[count])
                     },
 
                 loading = {

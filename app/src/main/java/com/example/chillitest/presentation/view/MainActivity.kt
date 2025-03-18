@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.chillitest.data.states.ResultTypes
+import com.example.chillitest.presentation.navigation.NavigationGraph
 import com.example.chillitest.presentation.viewmodel.GiphyViewModel
 import com.example.chillitest.ui.theme.ChilliTestTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,9 +27,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ChilliTestTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    MainScreen()
-                }
+                NavigationGraph()
             }
         }
     }
