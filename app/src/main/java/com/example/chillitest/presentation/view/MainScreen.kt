@@ -36,8 +36,13 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.rememberAsyncImagePainter
@@ -63,8 +68,15 @@ fun MainScreen(viewModel: GiphyViewModel = hiltViewModel()) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(16.dp, 32.dp)
     ) {
+        Text(
+            "Welcome!",
+            fontFamily = FontFamily(Font(R.font.walsheimregular)),
+            fontWeight = FontWeight(500),
+            fontSize = 28.sp
+        )
+
         CustomSearchBar(
             searchQuery = searchQuery,
             onQueryChange = { searchQuery = it },
@@ -187,6 +199,7 @@ fun ShowAll(data: List<Data>, viewModel: GiphyViewModel, searchQuery: String) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
         modifier = Modifier.fillMaxSize()
+            .padding(vertical = 6.dp)
     ) {
         items(data.size) { count ->
             SubcomposeAsyncImage(
