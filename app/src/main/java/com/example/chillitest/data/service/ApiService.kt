@@ -10,8 +10,6 @@ interface ApiService {
     suspend fun searchGifs(
         @Query("q") query: String,
         @Query("limit") limit: Int = 25,
-        @Query("offset") offset: Int = 0,
-        @Query("rating") rating: String = "g",
-        @Query("lang") lang: String = "en"
+        @Query("offset") offset: Int = 0
     ): Response<DataResponse>
 }

@@ -1,8 +1,6 @@
 package com.example.chillitest.data.di
 
-import com.example.chillitest.data.repository.GiphyRepository
 import com.example.chillitest.data.service.ApiService
-import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,7 +16,7 @@ import javax.inject.Singleton
 object NetworkModule {
 
     private const val BASE_URL = "https://api.giphy.com/v1/"
-    private const val API_KEY = "YOUR_API_KEY"
+    private const val API_KEY = "ZYyuP9xbYvtLvnJy85C4fyzKdGixE9Ah"
 
     @Provides
     @Singleton
