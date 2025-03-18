@@ -211,8 +211,9 @@ fun ShowAll(data: List<Data>, viewModel: GiphyViewModel, searchQuery: String) {
                 loading = {
                     LottieAnimation(
                         composition = loadComposition,
+                        iterations = Int.MAX_VALUE,
                         modifier = Modifier
-                            .size(30.dp)
+                            .size(20.dp)
                             .clip(RoundedCornerShape(12.dp))
                     )
                 },

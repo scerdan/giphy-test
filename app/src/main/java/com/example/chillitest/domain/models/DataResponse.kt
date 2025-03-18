@@ -1,8 +1,11 @@
 package com.example.chillitest.domain.models
 
-import com.google.gson.annotations.SerializedName
 
+import androidx.annotation.Keep
+
+@Keep
 data class DataResponse(
-    @SerializedName("data")
-    val data: List<Data>
+    val `data`: List<Data>,
+    val meta: Meta,
+    val pagination: Pagination
 )
