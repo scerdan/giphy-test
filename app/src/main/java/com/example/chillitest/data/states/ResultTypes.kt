@@ -49,7 +49,7 @@ sealed class ResultTypes<out T> {
      * an IOException or HttpException. This can include programming errors, FollowingData conversion issues,
      * unexpected errors, etc.
      */
-    data class Error(val exception: Throwable) : ResultTypes<Nothing>()
+    data class Error(val exception: String?) : ResultTypes<Nothing>()
 
     /**
      * Represents the loading state of the operation.

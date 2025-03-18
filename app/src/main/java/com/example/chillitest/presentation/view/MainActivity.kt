@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             ChilliTestTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    GiphyScreen()
+                    MainScreen()
                 }
             }
         }

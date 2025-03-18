@@ -20,7 +20,7 @@ class GiphyRepository @Inject constructor(private val apiService: ApiService) {
             when (e) {
                 is IOException -> ResultTypes.IOError(e)
                 is HttpException -> ResultTypes.HttpError(e)
-                else -> ResultTypes.Error(e)
+                else -> ResultTypes.Error(e.message)
             }
         }
     }
