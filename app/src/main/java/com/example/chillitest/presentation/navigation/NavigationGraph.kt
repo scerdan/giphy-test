@@ -6,7 +6,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.chillitest.presentation.view.MainScreen
+import com.example.chillitest.presentation.view.DetailScreen
+import com.example.chillitest.presentation.view.HomeScreen
 import com.example.chillitest.presentation.viewmodel.GiphyViewModel
 
 @Composable
@@ -18,7 +19,11 @@ fun NavigationGraph(
 
     NavHost(navController = navController, startDestination = Screens.HOME.route) {
         composable(route = Screens.HOME.route) {
-            MainScreen(navController, viewModel)
+            HomeScreen(navController, viewModel)
+        }
+
+        composable(route = Screens.DETAIL.route) {
+            DetailScreen(navController, viewModel)
         }
     }
 }

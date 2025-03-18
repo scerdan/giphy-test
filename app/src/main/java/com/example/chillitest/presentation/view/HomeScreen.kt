@@ -1,6 +1,5 @@
 package com.example.chillitest.presentation.view
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -53,15 +52,16 @@ import com.example.chillitest.data.repository.PaginationHandler
 import com.example.chillitest.data.states.ResultTypes
 import com.example.chillitest.domain.models.Data
 import com.example.chillitest.domain.models.DataResponse
+import com.example.chillitest.presentation.navigation.Screens
+import com.example.chillitest.presentation.navigation.goTo
 import com.example.chillitest.presentation.viewmodel.GiphyViewModel
 import kotlinx.coroutines.delay
 
 @Composable
-fun MainScreen(navController: NavHostController, viewModel: GiphyViewModel) {
+fun HomeScreen(navController: NavHostController, viewModel: GiphyViewModel) {
     var searchQuery by remember { mutableStateOf("") }
 
     val gifState by viewModel.gifState.collectAsState()
-    val dataItems by viewModel.selectedItem.collectAsState()
     val emptyComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.empty))
     val networkErrorComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.internet_error))
 
@@ -125,11 +125,7 @@ fun MainScreen(navController: NavHostController, viewModel: GiphyViewModel) {
                             .clip(RoundedCornerShape(12.dp))
                     )
                 } else {
-                    ShowAll(data = data, viewModel = viewModel, searchQuery = searchQuery)
-                }
-
-                if (dataItems is ResultTypes.Success) {
-                    Log.e("ITEM", (dataItems as ResultTypes.Success<Data>).data.toString())
+                    ShowAll(data = data, viewModel = viewModel, searchQuery = searchQuery, navController = navController)
                 }
             }
         }
@@ -148,7 +144,8 @@ fun CustomSearchBar(
 
     LaunchedEffect(searchQuery) {
         if (searchQuery.isNotEmpty()) {
-            delay(250)
+            delay(400)
+            keyboardController?.hide()
             onSearch()
         }
     }
@@ -195,7 +192,7 @@ fun CustomSearchBar(
 }
 
 @Composable
-fun ShowAll(data: List<Data>, viewModel: GiphyViewModel, searchQuery: String) {
+fun ShowAll(data: List<Data>, viewModel: GiphyViewModel, searchQuery: String, navController: NavHostController) {
     val context = LocalContext.current
     val loadComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.load))
     val isLastItemVisible = remember { mutableStateOf(false) }
@@ -215,6 +212,7 @@ fun ShowAll(data: List<Data>, viewModel: GiphyViewModel, searchQuery: String) {
                     .aspectRatio(1f)
                     .clickable {
                         viewModel.selectItem(data[count])
+                        goTo(Screens.DETAIL.route, navController, false)
                     },
 
                 loading = {
