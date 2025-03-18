@@ -4,11 +4,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -21,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.xr.compose.testing.toDp
 import coil.compose.AsyncImage
 import com.example.chillitest.data.states.ResultTypes
 import com.example.chillitest.presentation.viewmodel.GiphyViewModel
@@ -60,22 +64,25 @@ fun GiphyScreen(viewModel: GiphyViewModel = hiltViewModel()) {
                     val data = (gifs as ResultTypes.Success).data?.data
 
                     if (data != null) {
-                        items(data.size) { gif ->
+                        items(data.size) { count ->
                             AsyncImage(
-                                model = data[gif].url,
+                                model = data[count].images.original.url,
                                 contentDescription = null,
                                 modifier = Modifier
-                                    .padding(4.dp)
+                                    .padding(1.dp)
                                     .aspectRatio(1f)
+                                    .width(data[count].images.original.width.dp)
+                                    .height(data[count].images.original.height.dp)
                             )
                         }
                     }
                 }
 
-                is ResultTypes.Error -> TODO()
-                is ResultTypes.HttpError -> TODO()
-                is ResultTypes.IOError -> TODO()
-                ResultTypes.Loading -> TODO()
+                is ResultTypes.Error -> {}
+                is ResultTypes.HttpError ->{}
+                is ResultTypes.IOError -> {}
+                is ResultTypes.Loading -> {
+                }
             }
         }
     }
