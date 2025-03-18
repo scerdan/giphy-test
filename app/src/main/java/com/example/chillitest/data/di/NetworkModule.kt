@@ -16,7 +16,7 @@ import javax.inject.Singleton
 object NetworkModule {
 
     private const val BASE_URL = "https://api.giphy.com/v1/"
-    private const val API_KEY = "ZYyuP9xbYvtLvnJy85asdC4fyzKdGixE9Ah"
+    private const val API_KEY = "Bs3FrM2bXJrvWdSwT2gPMjPJ5XkNJyEE"
 
     @Provides
     @Singleton
