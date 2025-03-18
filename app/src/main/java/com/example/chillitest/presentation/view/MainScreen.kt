@@ -75,13 +75,14 @@ fun MainScreen(viewModel: GiphyViewModel = hiltViewModel()) {
 
         when (gifState) {
             is ResultTypes.Error -> {
-                // Mostrar un mensaje de error genérico
                 val errorMessage = (gifState as ResultTypes.Error)
                 Text(text = "Error: $errorMessage", color = androidx.compose.ui.graphics.Color.Red)
             }
 
             is ResultTypes.HttpError -> {
-                // Mostrar animación de error de red
+            }
+
+            is ResultTypes.IOError -> {
                 LottieAnimation(
                     composition = networkErrorComposition,
                     iterations = Int.MAX_VALUE,
@@ -91,13 +92,7 @@ fun MainScreen(viewModel: GiphyViewModel = hiltViewModel()) {
                 )
             }
 
-            is ResultTypes.IOError -> {
-                // Mostrar un mensaje de error de red
-                Text(text = "Network Error", color = androidx.compose.ui.graphics.Color.Red)
-            }
-
             ResultTypes.Loading -> {
-                // Mostrar animación de carga inicial
                 LottieAnimation(
                     composition = emptyComposition,
                     iterations = Int.MAX_VALUE,
@@ -110,7 +105,6 @@ fun MainScreen(viewModel: GiphyViewModel = hiltViewModel()) {
             is ResultTypes.Success -> {
                 val data = (gifState as ResultTypes.Success<DataResponse>).data?.data
                 if (data.isNullOrEmpty()) {
-                    // Mostrar animación de lista vacía
                     LottieAnimation(
                         composition = emptyComposition,
                         iterations = Int.MAX_VALUE,
@@ -119,7 +113,6 @@ fun MainScreen(viewModel: GiphyViewModel = hiltViewModel()) {
                             .clip(RoundedCornerShape(12.dp))
                     )
                 } else {
-                    // Mostrar la lista de GIFs
                     ShowAll(data = data, viewModel = viewModel, searchQuery = searchQuery)
                 }
             }
@@ -137,10 +130,8 @@ fun CustomSearchBar(
     val focusRequester = remember { FocusRequester() }
     var isFocused by remember { mutableStateOf(false) }
 
-    // Lanzar la búsqueda automáticamente cuando el texto cambia
     LaunchedEffect(searchQuery) {
         if (searchQuery.isNotEmpty()) {
-            // Esperar 500ms antes de ejecutar la búsqueda
             delay(250)
             onSearch()
         }
@@ -161,7 +152,7 @@ fun CustomSearchBar(
         OutlinedTextField(
             value = searchQuery,
             onValueChange = { query ->
-                onQueryChange(query) // Actualizar el texto de búsqueda
+                onQueryChange(query)
             },
             modifier = Modifier
                 .weight(1f)
@@ -169,7 +160,6 @@ fun CustomSearchBar(
                 .focusRequester(focusRequester)
                 .onFocusChanged { focusState ->
                     if (!focusState.isFocused && isFocused) {
-                        // Cuando se pierde el foco, cerrar el teclado
                         keyboardController?.hide()
                     }
                     isFocused = focusState.isFocused
@@ -177,7 +167,6 @@ fun CustomSearchBar(
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(
                 onDone = {
-                    // Ocultar el teclado cuando se presiona "Done"
                     keyboardController?.hide()
                     onSearch()
                 }
@@ -207,7 +196,6 @@ fun ShowAll(data: List<Data>, viewModel: GiphyViewModel, searchQuery: String) {
                     .padding(1.dp)
                     .aspectRatio(1f),
                 loading = {
-                    // Mostrar animación de carga mientras se carga la imagen
                     LottieAnimation(
                         composition = loadComposition,
                         modifier = Modifier
@@ -225,7 +213,6 @@ fun ShowAll(data: List<Data>, viewModel: GiphyViewModel, searchQuery: String) {
                 alignment = Alignment.Center
             )
 
-            // Detectar si el último elemento es visible
             if (count == data.size - 1) {
                 Toast.makeText(context, "Next Page", Toast.LENGTH_LONG).show()
                 isLastItemVisible.value = true
@@ -233,7 +220,6 @@ fun ShowAll(data: List<Data>, viewModel: GiphyViewModel, searchQuery: String) {
         }
     }
 
-    // Manejar la paginación
     PaginationHandler(
         isLastItemVisible = isLastItemVisible.value,
         onLoadMore = {
