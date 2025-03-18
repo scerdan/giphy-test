@@ -50,7 +50,7 @@ fun MainScreen(viewModel: GiphyViewModel = hiltViewModel()) {
 
     val gifState by viewModel.gifState.collectAsState()
     val emptyComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.empty))
-
+    val networkErrorComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.internet_error))
 
     Column(
         modifier = Modifier
@@ -61,7 +61,7 @@ fun MainScreen(viewModel: GiphyViewModel = hiltViewModel()) {
         Row(
             modifier = Modifier
                 .fillMaxWidth(1f)
-                .height(30.dp)
+                .height(50.dp)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.logo_icon),
@@ -86,7 +86,15 @@ fun MainScreen(viewModel: GiphyViewModel = hiltViewModel()) {
 
         when (gifState) {
             is ResultTypes.Error -> TODO()
-            is ResultTypes.HttpError -> TODO()
+            is ResultTypes.HttpError -> {
+                LottieAnimation(
+                    composition = networkErrorComposition,
+                    iterations = Int.MAX_VALUE,
+                    modifier = Modifier
+                        .fillMaxSize(1f)
+                        .clip(RoundedCornerShape(12.dp))
+                )
+            }
             is ResultTypes.IOError -> TODO()
             ResultTypes.Loading -> {
                 //TODO Crear Pantalla general indicando que se debe buscar en la barra

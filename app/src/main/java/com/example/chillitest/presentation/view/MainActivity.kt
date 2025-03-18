@@ -33,17 +33,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-//
-//@Composable
-//fun GiphyScreen(viewModel: GiphyViewModel = hiltViewModel()) {
-//    val gifs by viewModel.gifState.collectAsState()
-//    viewModel.searchGifs("CATS")
-//
-//    when(gifs) {
-//        is ResultTypes.Error -> TODO()
-//        is ResultTypes.HttpError -> TODO()
-//        is ResultTypes.IOError -> TODO()
-//        is ResultTypes.Loading -> TODO()
-//        is ResultTypes.Success -> TODO()
-//    }
-//}
