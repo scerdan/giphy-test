@@ -63,7 +63,6 @@ fun HomeScreen(navController: NavHostController, viewModel: GiphyViewModel) {
 
     val gifState by viewModel.gifState.collectAsState()
     val emptyComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.empty))
-    val networkErrorComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.internet_error))
 
     Column(
         modifier = Modifier
@@ -86,22 +85,10 @@ fun HomeScreen(navController: NavHostController, viewModel: GiphyViewModel) {
         )
 
         when (gifState) {
-            is ResultTypes.Error -> {
-                val errorMessage = (gifState as ResultTypes.Error)
-                Text(text = "Error: $errorMessage", color = androidx.compose.ui.graphics.Color.Red)
-            }
-
-            is ResultTypes.HttpError -> {
-            }
-
+            is ResultTypes.Error,
+            is ResultTypes.HttpError,
             is ResultTypes.IOError -> {
-                LottieAnimation(
-                    composition = networkErrorComposition,
-                    iterations = Int.MAX_VALUE,
-                    modifier = Modifier
-                        .fillMaxSize(1f)
-                        .clip(RoundedCornerShape(12.dp))
-                )
+                ErrorScreen(gifState)
             }
 
             ResultTypes.Loading -> {
