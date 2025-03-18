@@ -3,23 +3,22 @@ package com.example.chillitest.presentation.view
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,14 +28,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.ImageLoader
-import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -44,21 +40,17 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.chillitest.R
 import com.example.chillitest.data.repository.PaginationHandler
 import com.example.chillitest.data.states.ResultTypes
+import com.example.chillitest.domain.models.Data
+import com.example.chillitest.domain.models.DataResponse
 import com.example.chillitest.presentation.viewmodel.GiphyViewModel
 
 @Composable
 fun MainScreen(viewModel: GiphyViewModel = hiltViewModel()) {
     var searchQuery by remember { mutableStateOf("") }
 
-    val context = LocalContext.current
     val gifState by viewModel.gifState.collectAsState()
-    val errorMessage by viewModel.errorMessage.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
-
-    val loadComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.load))
     val emptyComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.empty))
 
-    val isLastItemVisible = remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -66,113 +58,97 @@ fun MainScreen(viewModel: GiphyViewModel = hiltViewModel()) {
             .padding(16.dp)
     ) {
         // SearchBar
-        TextField(
-            value = searchQuery,
-            onValueChange = { searchQuery = it },
-            label = { Text("Search GIFs") },
+        Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-            keyboardActions = KeyboardActions(
-                onSearch = {
-                    // Realizar una nueva búsqueda
-                    viewModel.searchGifs(searchQuery, isNewSearch = true)
-                }
-            )
-        )
-
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
-            modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth(1f)
+                .height(30.dp)
         ) {
-            when (gifState) {
-                is ResultTypes.Success -> {
-                    val data =
-                        (gifState as ResultTypes.Success).data?.data // Acceder a la lista de `data`
-
-                    if (data != null) {
-                        items(data.size) { count ->
-                            SubcomposeAsyncImage(
-                                model = data[count].images.original.url,
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .padding(1.dp)
-                                    .aspectRatio(1f),
-                                loading = {
-                                    LottieAnimation(
-                                        composition = loadComposition,
-                                        modifier = Modifier
-                                            .size(30.dp)
-                                            .clip(RoundedCornerShape(12.dp)) // Redondea las esquinas si lo deseas
-                                    )
-                                },
-                                alignment = Alignment.Center
-                            )
-
-                            if (count == data.size - 1) {
-                                Toast.makeText(
-                                    context,
-                                    "next Page",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                                isLastItemVisible.value = true
-                            }
-                        }
+            Image(
+                painter = painterResource(id = R.drawable.logo_icon),
+                contentDescription = "logo",
+                modifier = Modifier.size(20.dp)
+            )
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                label = { Text("Search GIFs") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                keyboardActions = KeyboardActions(
+                    onSearch = {
+                        viewModel.searchGifs(searchQuery, isNewSearch = true)
                     }
-                }
+                )
+            )
+        }
 
-                is ResultTypes.Error -> {
-                    item {
-                        Text(
-                            text = "Error: ${(gifState as ResultTypes.Error)}",
-                            color = Color.Red,
-                            modifier = Modifier.padding(16.dp)
-                        )
-                    }
-                }
+        when (gifState) {
+            is ResultTypes.Error -> TODO()
+            is ResultTypes.HttpError -> TODO()
+            is ResultTypes.IOError -> TODO()
+            ResultTypes.Loading -> {
+                //TODO Crear Pantalla general indicando que se debe buscar en la barra
+                LottieAnimation(
+                    composition = emptyComposition,
+                    iterations = Int.MAX_VALUE,
+                    modifier = Modifier
+                        .fillMaxSize(1f)
+                        .clip(RoundedCornerShape(12.dp))
+                )
+            }
 
-                is ResultTypes.HttpError -> {
-                    item {
-                        Text(
-                            text = "HTTP Error: ${(gifState as ResultTypes.HttpError).exception.code()}",
-                            color = Color.Red,
-                            modifier = Modifier.padding(16.dp)
-                        )
-                    }
-                }
+            is ResultTypes.Success -> {
+                val data = (gifState as ResultTypes.Success<DataResponse>).data?.data
+                ShowAll(data, viewModel, searchQuery)
+            }
+        }
+    }
+}
 
-                is ResultTypes.IOError -> {
-                    item {
-                        Text(
-                            text = "Network Error: ${(gifState as ResultTypes.IOError).exception.message}",
-                            color = Color.Red,
-                            modifier = Modifier.padding(16.dp)
-                        )
-                    }
-                }
+@Composable
+fun ShowAll(data: List<Data>?, viewModel: GiphyViewModel, searchQuery: String) {
+    val context = LocalContext.current
+    val loadComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.load))
+    val isLastItemVisible = remember { mutableStateOf(false) }
 
-                is ResultTypes.Loading -> {
-                    item {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(3),
+        modifier = Modifier.fillMaxSize()
+    ) {
+        data?.let {
+            items(it.size) { count ->
+                SubcomposeAsyncImage(
+                    model = it[count].images.original.url,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(1.dp)
+                        .aspectRatio(1f),
+                    loading = {
                         LottieAnimation(
-                            composition = emptyComposition,
+                            composition = loadComposition,
                             modifier = Modifier
-                                .fillMaxSize(1f)
+                                .size(30.dp)
                                 .clip(RoundedCornerShape(12.dp))
                         )
-                        Text("Awaiting your Search")
-                    }
+                    },
+                    alignment = Alignment.Center
+                )
+
+                if (count == it.size - 1) {
+                    Toast.makeText(context, "Next Page", Toast.LENGTH_LONG).show()
+                    isLastItemVisible.value = true
                 }
             }
         }
-
-        PaginationHandler(
-            isLastItemVisible = isLastItemVisible.value,
-            onLoadMore = {
-                viewModel.searchGifs(searchQuery, isNewSearch = false)
-                isLastItemVisible.value = false
-            }
-        )
     }
+
+    PaginationHandler(
+        isLastItemVisible = isLastItemVisible.value,
+        onLoadMore = {
+            viewModel.searchGifs(searchQuery, isNewSearch = false)
+            isLastItemVisible.value = false
+        }
+    )
 }
