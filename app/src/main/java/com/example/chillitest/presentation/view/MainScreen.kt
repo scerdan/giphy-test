@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
@@ -26,7 +27,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
@@ -35,6 +38,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.ImageLoader
 import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.chillitest.R
 import com.example.chillitest.data.repository.PaginationHandler
 import com.example.chillitest.data.states.ResultTypes
@@ -49,7 +55,9 @@ fun MainScreen(viewModel: GiphyViewModel = hiltViewModel()) {
     val errorMessage by viewModel.errorMessage.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
 
-    // Estado para detectar si el último elemento es visible
+    val loadComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.load))
+    val emptyComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.empty))
+
     val isLastItemVisible = remember { mutableStateOf(false) }
 
     Column(
@@ -93,12 +101,14 @@ fun MainScreen(viewModel: GiphyViewModel = hiltViewModel()) {
                                     .padding(1.dp)
                                     .aspectRatio(1f),
                                 loading = {
-                                    Image(
-                                        painter = painterResource(id = R.drawable.logo_icon),
-                                        contentDescription = "Loading...",
-                                        modifier = Modifier.size(50.dp)
+                                    LottieAnimation(
+                                        composition = loadComposition,
+                                        modifier = Modifier
+                                            .size(30.dp)
+                                            .clip(RoundedCornerShape(12.dp)) // Redondea las esquinas si lo deseas
                                     )
-                                }
+                                },
+                                alignment = Alignment.Center
                             )
 
                             if (count == data.size - 1) {
@@ -145,11 +155,13 @@ fun MainScreen(viewModel: GiphyViewModel = hiltViewModel()) {
 
                 is ResultTypes.Loading -> {
                     item {
-                        CircularProgressIndicator(
+                        LottieAnimation(
+                            composition = emptyComposition,
                             modifier = Modifier
-                                .padding(16.dp)
-                                .align(Alignment.CenterHorizontally)
+                                .fillMaxSize(1f)
+                                .clip(RoundedCornerShape(12.dp))
                         )
+                        Text("Awaiting your Search")
                     }
                 }
             }
