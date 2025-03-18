@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -57,15 +58,59 @@ fun ErrorScreen(errorMessage: ResultTypes<DataResponse>) {
                         .height(250.dp)
                 )
 
-                when(errorMessage.exception.code()) {
-                    429 -> {
-                        Text("Your API Key is making too many requests.",
+                when (errorMessage.exception.code()) {
+                    400 -> {
+                        Text(
+                            "Your request was formatted incorrectly or missing a required parameter(s).",
                             fontFamily = FontFamily(Font(R.font.walsheimregular)),
+                            fontWeight = FontWeight(300)
+                        )
+                    }
+                    401 -> {
+                        Text(
+                            "Your request lacks valid authentication credentials for the target resource, which most likely indicates an issue with your API Key or the API Key is missing.",
+                            fontFamily = FontFamily(Font(R.font.walsheimregular)),
+                            fontWeight = FontWeight(300)
+                        )
+                    }
+                    403 -> {
+                        Text(
+                            "You weren't authorized to make your request; most likely this indicates an issue with your API Key.",
+                            fontFamily = FontFamily(Font(R.font.walsheimregular)),
+                            fontWeight = FontWeight(300)
+                        )
+                    }
+                    404 -> {
+                        Text(
+                            "The particular GIF or Sticker you are requesting was not found. This occurs, for example, if you request a GIF by using an id that does not exist.",
+                            fontFamily = FontFamily(Font(R.font.walsheimregular)),
+                            fontWeight = FontWeight(300)
+                        )
+                    }
+                    414 -> {
+                        Text(
+                            "The length of the search query exceeds 50 characters.",
+                            fontFamily = FontFamily(Font(R.font.walsheimregular)),
+                            fontWeight = FontWeight(300)
+                        )
+                    }
+                    429 -> {
+                        Text(
+                            "Your API Key is making too many requests.",
+                            fontFamily = FontFamily(Font(R.font.walsheimregular)),
+                            fontWeight = FontWeight(300)
+                        )
+                    }
+                    else -> {
+                        Text(
+                            "An unexpected error occurred.",
+                            fontFamily = FontFamily(Font(R.font.walsheimregular)),
+                            fontWeight = FontWeight(300)
                         )
                     }
                 }
-
             }
+
             is ResultTypes.IOError -> {
                 LottieAnimation(
                     composition = networkErrorComposition,
@@ -73,6 +118,12 @@ fun ErrorScreen(errorMessage: ResultTypes<DataResponse>) {
                     modifier = Modifier
                         .fillMaxSize(1f)
                         .clip(RoundedCornerShape(12.dp))
+                )
+
+                Text(
+                    "A network error occurred. Please check your internet connection and try again.",
+                    fontFamily = FontFamily(Font(R.font.walsheimregular)),
+                    fontWeight = FontWeight(300)
                 )
             }
             else -> {}
