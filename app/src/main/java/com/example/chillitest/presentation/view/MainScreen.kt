@@ -2,14 +2,17 @@ package com.example.chillitest.presentation.view
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,8 +20,8 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,13 +30,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.SubcomposeAsyncImage
+import coil.compose.rememberAsyncImagePainter
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
@@ -43,6 +50,7 @@ import com.example.chillitest.data.states.ResultTypes
 import com.example.chillitest.domain.models.Data
 import com.example.chillitest.domain.models.DataResponse
 import com.example.chillitest.presentation.viewmodel.GiphyViewModel
+import kotlinx.coroutines.delay
 
 @Composable
 fun MainScreen(viewModel: GiphyViewModel = hiltViewModel()) {
@@ -57,36 +65,23 @@ fun MainScreen(viewModel: GiphyViewModel = hiltViewModel()) {
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // SearchBar
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(1f)
-                .height(50.dp)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.logo_icon),
-                contentDescription = "logo",
-                modifier = Modifier.size(20.dp)
-            )
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = { searchQuery = it },
-                label = { Text("Search GIFs") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                keyboardActions = KeyboardActions(
-                    onSearch = {
-                        viewModel.searchGifs(searchQuery, isNewSearch = true)
-                    }
-                )
-            )
-        }
+        CustomSearchBar(
+            searchQuery = searchQuery,
+            onQueryChange = { searchQuery = it },
+            onSearch = {
+                viewModel.searchGifs(searchQuery, isNewSearch = true)
+            }
+        )
 
         when (gifState) {
-            is ResultTypes.Error -> TODO()
+            is ResultTypes.Error -> {
+                // Mostrar un mensaje de error genérico
+                val errorMessage = (gifState as ResultTypes.Error)
+                Text(text = "Error: $errorMessage", color = androidx.compose.ui.graphics.Color.Red)
+            }
+
             is ResultTypes.HttpError -> {
+                // Mostrar animación de error de red
                 LottieAnimation(
                     composition = networkErrorComposition,
                     iterations = Int.MAX_VALUE,
@@ -95,9 +90,14 @@ fun MainScreen(viewModel: GiphyViewModel = hiltViewModel()) {
                         .clip(RoundedCornerShape(12.dp))
                 )
             }
-            is ResultTypes.IOError -> TODO()
+
+            is ResultTypes.IOError -> {
+                // Mostrar un mensaje de error de red
+                Text(text = "Network Error", color = androidx.compose.ui.graphics.Color.Red)
+            }
+
             ResultTypes.Loading -> {
-                //TODO Crear Pantalla general indicando que se debe buscar en la barra
+                // Mostrar animación de carga inicial
                 LottieAnimation(
                     composition = emptyComposition,
                     iterations = Int.MAX_VALUE,
@@ -109,14 +109,88 @@ fun MainScreen(viewModel: GiphyViewModel = hiltViewModel()) {
 
             is ResultTypes.Success -> {
                 val data = (gifState as ResultTypes.Success<DataResponse>).data?.data
-                ShowAll(data, viewModel, searchQuery)
+                if (data.isNullOrEmpty()) {
+                    // Mostrar animación de lista vacía
+                    LottieAnimation(
+                        composition = emptyComposition,
+                        iterations = Int.MAX_VALUE,
+                        modifier = Modifier
+                            .fillMaxSize(1f)
+                            .clip(RoundedCornerShape(12.dp))
+                    )
+                } else {
+                    // Mostrar la lista de GIFs
+                    ShowAll(data = data, viewModel = viewModel, searchQuery = searchQuery)
+                }
             }
         }
     }
 }
 
 @Composable
-fun ShowAll(data: List<Data>?, viewModel: GiphyViewModel, searchQuery: String) {
+fun CustomSearchBar(
+    searchQuery: String,
+    onQueryChange: (String) -> Unit,
+    onSearch: () -> Unit
+) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusRequester = remember { FocusRequester() }
+    var isFocused by remember { mutableStateOf(false) }
+
+    // Lanzar la búsqueda automáticamente cuando el texto cambia
+    LaunchedEffect(searchQuery) {
+        if (searchQuery.isNotEmpty()) {
+            // Esperar 500ms antes de ejecutar la búsqueda
+            delay(250)
+            onSearch()
+        }
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.logo_icon),
+            contentDescription = "logo",
+            modifier = Modifier.size(60.dp)
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        OutlinedTextField(
+            value = searchQuery,
+            onValueChange = { query ->
+                onQueryChange(query) // Actualizar el texto de búsqueda
+            },
+            modifier = Modifier
+                .weight(1f)
+                .height(60.dp)
+                .focusRequester(focusRequester)
+                .onFocusChanged { focusState ->
+                    if (!focusState.isFocused && isFocused) {
+                        // Cuando se pierde el foco, cerrar el teclado
+                        keyboardController?.hide()
+                    }
+                    isFocused = focusState.isFocused
+                },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    // Ocultar el teclado cuando se presiona "Done"
+                    keyboardController?.hide()
+                    onSearch()
+                }
+            ),
+            placeholder = {
+                Text(text = "Search gifs")
+            }
+        )
+    }
+}
+
+@Composable
+fun ShowAll(data: List<Data>, viewModel: GiphyViewModel, searchQuery: String) {
     val context = LocalContext.current
     val loadComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.load))
     val isLastItemVisible = remember { mutableStateOf(false) }
@@ -125,33 +199,41 @@ fun ShowAll(data: List<Data>?, viewModel: GiphyViewModel, searchQuery: String) {
         columns = GridCells.Fixed(3),
         modifier = Modifier.fillMaxSize()
     ) {
-        data?.let {
-            items(it.size) { count ->
-                SubcomposeAsyncImage(
-                    model = it[count].images.original.url,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(1.dp)
-                        .aspectRatio(1f),
-                    loading = {
-                        LottieAnimation(
-                            composition = loadComposition,
-                            modifier = Modifier
-                                .size(30.dp)
-                                .clip(RoundedCornerShape(12.dp))
-                        )
-                    },
-                    alignment = Alignment.Center
-                )
+        items(data.size) { count ->
+            SubcomposeAsyncImage(
+                model = data[count].images.original.url,
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(1.dp)
+                    .aspectRatio(1f),
+                loading = {
+                    // Mostrar animación de carga mientras se carga la imagen
+                    LottieAnimation(
+                        composition = loadComposition,
+                        modifier = Modifier
+                            .size(30.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                    )
+                },
+                error = {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                        contentDescription = "Error",
+                        modifier = Modifier.size(30.dp)
+                    )
+                },
+                alignment = Alignment.Center
+            )
 
-                if (count == it.size - 1) {
-                    Toast.makeText(context, "Next Page", Toast.LENGTH_LONG).show()
-                    isLastItemVisible.value = true
-                }
+            // Detectar si el último elemento es visible
+            if (count == data.size - 1) {
+                Toast.makeText(context, "Next Page", Toast.LENGTH_LONG).show()
+                isLastItemVisible.value = true
             }
         }
     }
 
+    // Manejar la paginación
     PaginationHandler(
         isLastItemVisible = isLastItemVisible.value,
         onLoadMore = {
