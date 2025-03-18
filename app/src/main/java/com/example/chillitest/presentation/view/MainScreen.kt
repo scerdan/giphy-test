@@ -2,6 +2,7 @@ package com.example.chillitest.presentation.view
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -198,7 +199,8 @@ fun ShowAll(data: List<Data>, viewModel: GiphyViewModel, searchQuery: String) {
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .padding(vertical = 6.dp)
     ) {
         items(data.size) { count ->
@@ -207,7 +209,16 @@ fun ShowAll(data: List<Data>, viewModel: GiphyViewModel, searchQuery: String) {
                 contentDescription = null,
                 modifier = Modifier
                     .padding(1.dp)
-                    .aspectRatio(1f),
+                    .aspectRatio(1f)
+                    .clickable {
+                        Toast
+                            .makeText(
+                                context,
+                                data[count].alt_text, Toast.LENGTH_SHORT
+                            )
+                            .show()
+                    },
+
                 loading = {
                     LottieAnimation(
                         composition = loadComposition,
@@ -228,7 +239,6 @@ fun ShowAll(data: List<Data>, viewModel: GiphyViewModel, searchQuery: String) {
             )
 
             if (count == data.size - 1) {
-                Toast.makeText(context, "Next Page", Toast.LENGTH_LONG).show()
                 isLastItemVisible.value = true
             }
         }
