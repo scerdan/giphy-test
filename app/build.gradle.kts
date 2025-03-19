@@ -17,7 +17,7 @@ android {
         versionCode = 1
         versionName = "1.0.0"
 
-        buildConfigField("String", "API_KEY","\"Bs3FrM2bXJrvWdSwT2gPMjPJ5XkNJyEE\"")
+        buildConfigField("String", "API_KEY","\"Bs3FrM2bXJr222vWdSwT2gPMjPJ5XkNJyEE\"")
         buildConfigField("String", "BASE_URL","\"https://api.giphy.com/v1/\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
