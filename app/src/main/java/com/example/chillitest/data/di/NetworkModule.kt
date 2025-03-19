@@ -1,5 +1,6 @@
 package com.example.chillitest.data.di
 
+import com.example.chillitest.BuildConfig
 import com.example.chillitest.data.service.ApiService
 import dagger.Module
 import dagger.Provides
@@ -15,9 +16,6 @@ import javax.inject.Singleton
 @Module
 object NetworkModule {
 
-    private const val BASE_URL = "https://api.giphy.com/v1/"
-    private const val API_KEY = "Bs3FrM2bXJrvWdSwT2gPMjPJ5XkNJyEE"
-
     @Provides
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {
@@ -25,7 +23,7 @@ object NetworkModule {
             .addInterceptor { chain ->
                 val original: Request = chain.request()
                 val url = original.url.newBuilder()
-                    .addQueryParameter("api_key", API_KEY)
+                    .addQueryParameter("api_key", BuildConfig.API_KEY)
                     .build()
                 val request = original.newBuilder().url(url).build()
                 chain.proceed(request)
@@ -37,7 +35,7 @@ object NetworkModule {
     @Singleton
     fun provideRetrofit(client: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(BuildConfig.BASE_URL)
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()

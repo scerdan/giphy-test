@@ -17,7 +17,8 @@ android {
         versionCode = 1
         versionName = "1.0.0"
 
-        buildConfigField("String", "API_KEY","\"eRhTbiIpIS9k5I4LAVEk3xZP3KyJvFJ1\"")
+        buildConfigField("String", "API_KEY","\"Bs3FrM2bXJrvWdSwT2gPMjPJ5XkNJyEE\"")
+        buildConfigField("String", "BASE_URL","\"https://api.giphy.com/v1/\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -28,6 +29,7 @@ android {
     buildTypes {
         debug {
             isMinifyEnabled = false
+            isDebuggable = true
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
             buildConfigField("Boolean", "DEBUG", "true")
@@ -35,6 +37,7 @@ android {
 
         release {
             isMinifyEnabled = false
+            isDebuggable = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -63,7 +66,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.hilt.android)
     implementation(libs.core)
     implementation(libs.androidx.junit.ktx)
@@ -103,22 +105,11 @@ dependencies {
     implementation(libs.coil.gif)
     implementation(libs.lottie.compose)
 
-    testImplementation("junit:junit:4.13.2")
-
-    // Hilt Testing
+    testImplementation(libs.junit)
     androidTestImplementation(libs.hilt.android.testing)
-    // Robolectric para pruebas sin emulador
     testImplementation(libs.robolectric)
-
-    // MockWebServer para simular respuestas HTTP
     testImplementation(libs.mockwebserver)
-
-    // Truth para aserciones más legibles
     testImplementation(libs.truth)
-
-    // Core Testing para trabajar con LiveData, Flows, etc.
     testImplementation(libs.androidx.core.testing)
-
-    // Espresso para pruebas de UI (opcional si necesitas test de interfaz)
     androidTestImplementation(libs.androidx.espresso.core)
 }
