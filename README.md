@@ -104,6 +104,9 @@ This setup ensures isolated testing of the networking layer, making it independe
 ## Optimizations
 What could we optimize in this project?
 A lot of things!
-For starters, it was done in a few days, so it has a lot of room for optimization. Next I'll go on to optimize some of the edges that we could attack in future features.
-Firstly, we could include tests for the whole app, since we have only tested only the network module.
-As a future feature it occurs to me that we could add a screen to introduce a new token when we have a token error.
+For starters, it was done in a few days, so it has a lot of room for optimization. Next I'll go on to optimize some of the edges that we could attack in future features:
+- Firstly, we could include tests for the whole app, since we have only tested only the network module.
+- As a future feature it occurs to me that we could add a screen to introduce a new token when we have a token error.
+- We can improve the designs, add functionality for downloading GIFs and take advantage of the sticker endpoint to expand the options available.
+
+As we can see, we have a lot of room for improvement!
