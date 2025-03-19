@@ -1,4 +1,5 @@
-# My Giphy Test App
+# My Giphy Test App <a href="https://github.com/scerdan"><img alt="License" src="https://img.shields.io/static/v1?label=GitHub&message=sCerdan&color=00ff4c"/></a>
+
 This project is an Android application written in **Kotlin** using **Jetpack Compose** as the primary tool for the user interface. It is designed to manage and display gifs from the api of Giphy Service.
 
 ## Features
@@ -13,7 +14,7 @@ This project is an Android application written in **Kotlin** using **Jetpack Com
 
 | Home Screen | Detail Screen | Preview |
 |-------------------|----------------|----------------|
-| <img src="https://github.com/scerdan/giphy-test/blob/develop/media/home.jpg" width="250"/> | <img src="https://github.com/scerdan/giphy-test/blob/develop/media/detail.jpg" width="250"/> | <img src="https://github.com/scerdan/giphy-test/blob/develop/media/video.gif" width="250"/> |
+| <img src="https://github.com/scerdan/giphy-test/blob/develop/media/home.jpg" width="250"/> | <img src="https://github.com/scerdan/giphy-test/blob/develop/media/detail.jpg" width="250"/> | <p align="center"> <img src="https://github.com/scerdan/giphy-test/blob/develop/media/video.gif" width="250" height="570" /></p>|
 
 # States
 
@@ -81,6 +82,23 @@ GET https://api.giphy.com/v1/gifs/search
 ```
 [Giphy Documentation](https://developers.giphy.com/docs/api)
 
+# Unit Test
+
+This test class verifies the functionality of the `NetworkModule`, ensuring the proper creation and behavior of `OkHttpClient`, `Retrofit`, and `ApiService`.
+
+- **testProvideOkHttpClient:** Ensures that the `OkHttpClient` instance is created correctly and is not null.  
+- **testProvideRetrofit:** Verifies that the `Retrofit` instance is properly created and that its base URL matches the one provided by the `MockWebServer`.  
+- **testApiKeyValid:** Simulates a valid API key scenario by enqueueing a mock response with a 200 status code. Checks that the API call succeeds and returns the expected status code.  
+- **testApiKeyInvalidOrRateLimitExceeded:** Simulates an invalid API key or rate limit exceeded scenario by enqueueing a mock response with a 429 status code. Ensures that the API call fails and returns the expected status code.  
+
+### Test Setup
+
+- **MockWebServer:** Used to simulate API responses without making actual network requests.  
+- **Interceptors:** Two interceptors are added to `OkHttpClient`:  
+  - *Logging Interceptor:* Logs request and response details, such as method, URL, headers, and response body.  
+  - *API Key Interceptor:* Automatically appends the API key as a query parameter to every request.  
+
+This setup ensures isolated testing of the networking layer, making it independent of the actual API and network conditions.
 
 
 ## Optimizations
