@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
+    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -64,8 +65,12 @@ android {
 dependencies {
 
     implementation(libs.hilt.android)
+    implementation(libs.core)
+    implementation(libs.androidx.junit.ktx)
+    testImplementation(libs.dagger.hilt.android.testing)
     kapt(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.hilt.android.gradle.plugin)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -97,4 +102,23 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.gif)
     implementation(libs.lottie.compose)
+
+    testImplementation("junit:junit:4.13.2")
+
+    // Hilt Testing
+    androidTestImplementation(libs.hilt.android.testing)
+    // Robolectric para pruebas sin emulador
+    testImplementation(libs.robolectric)
+
+    // MockWebServer para simular respuestas HTTP
+    testImplementation(libs.mockwebserver)
+
+    // Truth para aserciones más legibles
+    testImplementation(libs.truth)
+
+    // Core Testing para trabajar con LiveData, Flows, etc.
+    testImplementation(libs.androidx.core.testing)
+
+    // Espresso para pruebas de UI (opcional si necesitas test de interfaz)
+    androidTestImplementation(libs.androidx.espresso.core)
 }
