@@ -109,4 +109,4 @@ For starters, it was done in a few days, so it has a lot of room for optimizatio
 - As a future feature it occurs to me that we could add a screen to introduce a new token when we have a token error.
 - We can improve the designs, add functionality for downloading GIFs and take advantage of the sticker endpoint to expand the options available.
 
-As we can see, we have a lot of room for improvement!
+As we can see, we have a lot of room for improvement! 😁
