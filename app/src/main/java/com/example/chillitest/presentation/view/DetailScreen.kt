@@ -9,7 +9,10 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,6 +20,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
@@ -29,6 +33,9 @@ import coil.ImageLoader
 import coil.compose.AsyncImage
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.chillitest.R
 import com.example.chillitest.data.states.ResultTypes
 import com.example.chillitest.domain.models.Data
@@ -55,6 +62,7 @@ fun DetailScreen(navController: NavHostController, viewModel: GiphyViewModel) {
 @Composable
 fun ShowDetails(dataItems: ResultTypes.Success<Data>) {
     val context = LocalContext.current
+    val okComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.ok))
     val gifImageLoader = ImageLoader.Builder(context)
         .components {
             if (Build.VERSION.SDK_INT >= 28) {
@@ -105,8 +113,16 @@ fun ShowDetails(dataItems: ResultTypes.Success<Data>) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth(1f),
-                horizontalArrangement = Arrangement.End
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
             ) {
+                LottieAnimation(
+                    composition = okComposition,
+                    iterations = Int.MAX_VALUE,
+                    modifier = Modifier
+                        .size(30.dp)
+                )
+
                 Text(
                     text = if (dataItems.data?.import_datetime?.isNullOrEmpty() == true) "Datatime Not Available" else dataItems.data?.import_datetime.toString(),
                     fontFamily = FontFamily(Font(R.font.walsheimregular)),

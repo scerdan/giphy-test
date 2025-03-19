@@ -131,7 +131,7 @@ fun CustomSearchBar(
 
     LaunchedEffect(searchQuery) {
         if (searchQuery.isNotEmpty()) {
-            delay(400)
+            delay(750)
             keyboardController?.hide()
             onSearch()
         }
