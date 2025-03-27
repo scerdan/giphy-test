@@ -1,6 +1,5 @@
 package com.example.chillitest.presentation.view
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,7 +12,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -28,7 +26,6 @@ import com.example.chillitest.domain.models.DataResponse
 
 @Composable
 fun ErrorScreen(errorMessage: ResultTypes<DataResponse>) {
-//    val errorMessage = (errorMessage as ResultTypes.HttpError)
     val networkErrorComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.internet_error))
     val tokenComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.error))
 

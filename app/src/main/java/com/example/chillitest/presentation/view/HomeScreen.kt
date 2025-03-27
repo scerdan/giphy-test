@@ -33,7 +33,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
@@ -180,7 +179,6 @@ fun CustomSearchBar(
 
 @Composable
 fun ShowAll(data: List<Data>, viewModel: GiphyViewModel, searchQuery: String, navController: NavHostController) {
-    val context = LocalContext.current
     val loadComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.load))
     val isLastItemVisible = remember { mutableStateOf(false) }
 

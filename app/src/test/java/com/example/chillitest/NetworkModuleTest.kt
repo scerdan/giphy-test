@@ -59,15 +59,15 @@ class NetworkModuleTest {
         val apiKeyInterceptor = Interceptor { chain ->
             val originalRequest = chain.request()
             val newUrl = originalRequest.url.newBuilder()
-                .addQueryParameter("api_key", apiKey)  // Agrega la API key como parámetro de consulta
+                .addQueryParameter("api_key", apiKey)
                 .build()
             val newRequest = originalRequest.newBuilder().url(newUrl).build()
             chain.proceed(newRequest)
         }
 
         okHttpClient = OkHttpClient.Builder()
-            .addInterceptor(loggingInterceptor)  // Interceptor de logging
-            .addInterceptor(apiKeyInterceptor)   // Interceptor de API key
+            .addInterceptor(loggingInterceptor)
+            .addInterceptor(apiKeyInterceptor)
             .build()
 
         retrofit = Retrofit.Builder()

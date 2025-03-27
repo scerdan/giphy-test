@@ -18,8 +18,8 @@ sealed class Screens(val route: String) {
 fun goTo(direction: String, navController: NavController, clearBackStack: Boolean) {
     if (clearBackStack) {
         navController.navigate(direction) {
-            popUpTo(0) { inclusive = true } // Elimina toda la pila
-            launchSingleTop = true // Evita duplicados
+            popUpTo(0) { inclusive = true }
+            launchSingleTop = true
         }
     } else {
         navController.navigate(direction)
