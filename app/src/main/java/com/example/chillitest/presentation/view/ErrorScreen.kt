@@ -2,6 +2,7 @@ package com.example.chillitest.presentation.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -35,7 +36,7 @@ fun ErrorScreen(errorMessage: ResultTypes<DataResponse>) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        when(errorMessage) {
+        when (errorMessage) {
             is ResultTypes.Error -> {
                 LottieAnimation(
                     composition = tokenComposition,
@@ -44,7 +45,9 @@ fun ErrorScreen(errorMessage: ResultTypes<DataResponse>) {
                         .fillMaxSize(1f)
                         .clip(RoundedCornerShape(12.dp))
                 )
+                GenericMessageError()
             }
+
             is ResultTypes.HttpError -> {
                 LottieAnimation(
                     composition = tokenComposition,
@@ -54,7 +57,10 @@ fun ErrorScreen(errorMessage: ResultTypes<DataResponse>) {
                         .width(400.dp)
                         .height(250.dp)
                 )
-
+                Spacer(
+                    modifier = Modifier
+                        .height(32.dp)
+                )
                 when (errorMessage.exception.code()) {
                     400 -> {
                         Text(
@@ -63,6 +69,7 @@ fun ErrorScreen(errorMessage: ResultTypes<DataResponse>) {
                             fontWeight = FontWeight(300)
                         )
                     }
+
                     401 -> {
                         Text(
                             "Your request lacks valid authentication credentials for the target resource, which most likely indicates an issue with your API Key or the API Key is missing.",
@@ -70,6 +77,7 @@ fun ErrorScreen(errorMessage: ResultTypes<DataResponse>) {
                             fontWeight = FontWeight(300)
                         )
                     }
+
                     403 -> {
                         Text(
                             "You weren't authorized to make your request; most likely this indicates an issue with your API Key.",
@@ -77,6 +85,7 @@ fun ErrorScreen(errorMessage: ResultTypes<DataResponse>) {
                             fontWeight = FontWeight(300)
                         )
                     }
+
                     404 -> {
                         Text(
                             "The particular GIF or Sticker you are requesting was not found. This occurs, for example, if you request a GIF by using an id that does not exist.",
@@ -84,6 +93,7 @@ fun ErrorScreen(errorMessage: ResultTypes<DataResponse>) {
                             fontWeight = FontWeight(300)
                         )
                     }
+
                     414 -> {
                         Text(
                             "The length of the search query exceeds 50 characters.",
@@ -91,6 +101,7 @@ fun ErrorScreen(errorMessage: ResultTypes<DataResponse>) {
                             fontWeight = FontWeight(300)
                         )
                     }
+
                     429 -> {
                         Text(
                             "Your API Key is making too many requests.",
@@ -98,12 +109,9 @@ fun ErrorScreen(errorMessage: ResultTypes<DataResponse>) {
                             fontWeight = FontWeight(300)
                         )
                     }
+
                     else -> {
-                        Text(
-                            "An unexpected error occurred.",
-                            fontFamily = FontFamily(Font(R.font.walsheimregular)),
-                            fontWeight = FontWeight(300)
-                        )
+                        GenericMessageError()
                     }
                 }
             }
@@ -116,14 +124,33 @@ fun ErrorScreen(errorMessage: ResultTypes<DataResponse>) {
                         .fillMaxSize(1f)
                         .clip(RoundedCornerShape(12.dp))
                 )
-
+                Spacer(
+                    modifier = Modifier
+                        .height(32.dp)
+                )
                 Text(
                     "A network error occurred. Please check your internet connection and try again.",
                     fontFamily = FontFamily(Font(R.font.walsheimregular)),
                     fontWeight = FontWeight(300)
                 )
             }
-            else -> {}
+
+            else -> {
+                GenericMessageError()
+            }
         }
     }
+}
+
+@Composable
+fun GenericMessageError() {
+    Spacer(
+        modifier = Modifier
+            .height(32.dp)
+    )
+    Text(
+        "An unexpected error occurred. Please try Again.",
+        fontFamily = FontFamily(Font(R.font.walsheimregular)),
+        fontWeight = FontWeight(300)
+    )
 }

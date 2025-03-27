@@ -15,7 +15,6 @@ fun NavigationGraph(
     viewModel: GiphyViewModel = hiltViewModel()
 ) {
     val navController = rememberNavController()
-    val context = LocalContext.current
 
     NavHost(navController = navController, startDestination = Screens.HOME.route) {
         composable(route = Screens.HOME.route) {
